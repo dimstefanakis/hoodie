@@ -17,7 +17,7 @@ export function Hero({ onBuyClick }: HeroProps) {
           playsInline
           className="object-cover w-full h-full opacity-60 grayscale scale-105"
         >
-          <source src="/videos/hero-background.mp4" type="video/mp4" />
+          <source src="/videos/202512301326.webm" type="video/webm" />
         </video>
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/20"></div>
         {/* Grain Overlay */}
