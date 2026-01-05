@@ -61,10 +61,15 @@ export async function submitLead(prevState: SubmitState, formData: FormData): Pr
     const forwardedFor = requestHeaders.get('x-forwarded-for')
     const clientIpAddress = forwardedFor ? forwardedFor.split(',')[0]?.trim() : undefined
 
+    const host = requestHeaders.get('x-forwarded-host') ?? requestHeaders.get('host')
+    const protocol = requestHeaders.get('x-forwarded-proto') ?? 'https'
+    const fallbackSourceUrl = host ? `${protocol}://${host}/` : undefined
+    const eventSourceUrl = requestHeaders.get('referer') ?? fallbackSourceUrl
+
     await sendMetaCompleteRegistrationConversion({
       email: validatedFields.data.email,
       eventId,
-      eventSourceUrl: requestHeaders.get('referer') ?? undefined,
+      eventSourceUrl,
       clientIpAddress,
       clientUserAgent: requestHeaders.get('user-agent') ?? undefined,
       fbp: cookieStore.get('_fbp')?.value,

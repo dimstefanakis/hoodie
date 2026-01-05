@@ -14,10 +14,37 @@ interface LeadCaptureModalProps {
   price: number
 }
 
+const stripeReservePath = "/reserve"
+
+function createEventId() {
+  try {
+    return crypto.randomUUID()
+  } catch {
+    return `${Date.now()}_${Math.random().toString(16).slice(2)}`
+  }
+}
+
 export function LeadCaptureModal({ isOpen, onOpenChange, price }: LeadCaptureModalProps) {
   const [state, formAction, isPending] = useActionState(submitLead, {})
   const [dismissedSuccessEventId, setDismissedSuccessEventId] = useState<string | undefined>(undefined)
   const lastTrackedEventIdRef = useRef<string | undefined>(undefined)
+
+  const handleReserveClick = () => {
+    const eventId = createEventId()
+
+    const fbq = window.fbq
+    const href = `${stripeReservePath}?event_id=${encodeURIComponent(eventId)}`
+
+    if (typeof fbq === "function") {
+      fbq("track", "InitiateCheckout", { value: 1, currency: "EUR" }, { eventID: eventId })
+      setTimeout(() => {
+        window.location.href = href
+      }, 150)
+      return
+    }
+
+    window.location.href = href
+  }
 
   const successEventId = state.success ? state.eventId : undefined
   const successOpen = Boolean(successEventId && dismissedSuccessEventId !== successEventId)
@@ -96,19 +123,53 @@ export function LeadCaptureModal({ isOpen, onOpenChange, price }: LeadCaptureMod
         <DialogContent className="sm:max-w-[425px] border-zinc-200 dark:border-zinc-800 bg-white dark:bg-black p-8 text-center">
           <DialogHeader>
             <DialogTitle className="text-2xl font-light tracking-tight pb-2">
-              You are on the list.
+              You are on the waitlist.
             </DialogTitle>
             <DialogDescription className="text-zinc-500 text-lg">
-              We will email you the moment orders open.
+              We will notify you when general public access opens.
             </DialogDescription>
           </DialogHeader>
           <div className="pt-6">
-            <Button 
-              onClick={() => handleSuccessOpenChange(false)}
-              className="w-full h-12 text-lg font-normal bg-zinc-950 text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 rounded-none"
-            >
-              Close
-            </Button>
+            <p className="text-sm font-light text-zinc-500 dark:text-zinc-400 leading-relaxed pb-4">
+              Don't want to wait? Batch 1 is strictly limited. You can skip the line and secure your allocation today.
+            </p>
+            <ul className="text-sm font-light text-zinc-500 dark:text-zinc-400 leading-relaxed pb-6 text-left space-y-3">
+              <li className="flex items-start">
+                <span className="mr-2 text-zinc-950 dark:text-white">•</span>
+                <span>
+                  <strong className="font-medium text-zinc-950 dark:text-white">Guaranteed:</strong> Lock in your
+                  allocation before it sells out.
+                </span>
+              </li>
+              <li className="flex items-start">
+                <span className="mr-2 text-zinc-950 dark:text-white">•</span>
+                <span>
+                  <strong className="font-medium text-zinc-950 dark:text-white">Priority:</strong> Your order ships in
+                  the first wave.
+                </span>
+              </li>
+              <li className="flex items-start">
+                <span className="mr-2 text-zinc-950 dark:text-white">•</span>
+                <span>
+                  <strong className="font-medium text-zinc-950 dark:text-white">Deposit:</strong> The €1 is deducted from
+                  your final price.
+                </span>
+              </li>
+            </ul>
+            <div className="flex flex-col gap-3">
+              <Button
+                onClick={handleReserveClick}
+                className="w-full h-12 text-lg font-normal bg-zinc-950 text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 rounded-none"
+              >
+                Secure Allocation for €1
+              </Button>
+              <Button
+                onClick={() => handleSuccessOpenChange(false)}
+                className="w-full h-12 text-lg font-normal bg-transparent text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50 dark:text-zinc-400 dark:hover:text-white dark:hover:bg-zinc-900 border-0 rounded-none"
+              >
+                I'll wait for public release
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
