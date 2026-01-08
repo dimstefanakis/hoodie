@@ -1,11 +1,12 @@
 import { randomUUID } from "node:crypto"
 import { NextRequest, NextResponse } from "next/server"
-import { sendMetaInitiateCheckoutConversion } from "@/lib/meta/conversions-api"
+import { sendMetaCompleteRegistrationConversion, sendMetaInitiateCheckoutConversion } from "@/lib/meta/conversions-api"
 
 const stripePaymentLinkUrl = "https://buy.stripe.com/4gMdR99xF8zx86LgJG2Ji00"
 
 export async function GET(request: NextRequest) {
   const eventId = request.nextUrl.searchParams.get("event_id") ?? randomUUID()
+  const registrationEventId = `${eventId}-registration`
 
   const forwardedFor = request.headers.get("x-forwarded-for")
   const clientIpAddress = forwardedFor ? forwardedFor.split(",")[0]?.trim() : undefined
@@ -16,6 +17,15 @@ export async function GET(request: NextRequest) {
   const eventSourceUrl = request.headers.get("referer") ?? fallbackSourceUrl
 
   try {
+    await sendMetaCompleteRegistrationConversion({
+      eventId: registrationEventId,
+      eventSourceUrl,
+      clientIpAddress,
+      clientUserAgent: request.headers.get("user-agent") ?? undefined,
+      fbp: request.cookies.get("_fbp")?.value,
+      fbc: request.cookies.get("_fbc")?.value,
+    })
+
     await sendMetaInitiateCheckoutConversion({
       eventId,
       eventSourceUrl,

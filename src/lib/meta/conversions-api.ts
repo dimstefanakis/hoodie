@@ -93,7 +93,7 @@ async function sendMetaConversionEvent({
 }
 
 type SendCompleteRegistrationParams = Omit<SendMetaConversionParams, "eventName" | "customData"> & {
-  email: string
+  email?: string
   value?: number
   currency?: string
 }
