@@ -41,18 +41,18 @@ export function ReservationModal() {
       <DialogContent className="border-zinc-900 bg-black p-8 text-center text-white">
         <DialogHeader>
           <DialogTitle className="text-2xl font-light tracking-tight">
-            Secure Early Access
+            Join the Next Batch
           </DialogTitle>
           <DialogDescription className="text-zinc-400">
-            Batch allocated.
+            The current run is full.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 pt-4">
           <p className="text-sm text-zinc-400 leading-relaxed">
-            The Cloak launches soon at <span className="text-white">€149</span>.
-            Avoid the public waitlist and secure your allocation now for just{" "}
-            <span className="text-white">€1 (refundable)</span>.
+            Reserve your place in line for the next batch with a{" "}
+            <span className="text-white">€1 (refundable)</span> hold. You'll
+            be notified the moment your slot opens.
           </p>
 
           <div className="flex flex-col gap-3">
@@ -75,7 +75,7 @@ export function ReservationModal() {
               onClick={() => setModalOpen(false)}
               className="h-12 w-full text-zinc-400 hover:bg-zinc-900 hover:text-white"
             >
-              I&apos;ll wait for public release
+              I&apos;ll wait for later
             </Button>
           </div>
         </div>
