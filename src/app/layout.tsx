@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next"
 import Script from "next/script";
+import { MetaPixelPageView } from "@/components/meta/MetaPixelPageView"
 import "./globals.css";
 
 const geistSans = Geist({
@@ -48,6 +49,7 @@ fbq('track', 'PageView');`}
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white dark:bg-black text-black dark:text-white`}
       >
         {children}
+        <MetaPixelPageView />
         <Analytics />
       </body>
     </html>
