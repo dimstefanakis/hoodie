@@ -1,13 +1,11 @@
 import { randomUUID } from "node:crypto"
 import { NextRequest, NextResponse } from "next/server"
-import { sendMetaCompleteRegistrationConversion, sendMetaInitiateCheckoutConversion } from "@/lib/meta/conversions-api"
+import { sendMetaLeadConversion } from "@/lib/meta/conversions-api"
 
 const stripePaymentLinkUrl = "https://buy.stripe.com/4gMdR99xF8zx86LgJG2Ji00"
 
 export async function GET(request: NextRequest) {
   const eventId = request.nextUrl.searchParams.get("event_id") ?? randomUUID()
-  const registrationEventId = `${eventId}-registration`
-
   const forwardedFor = request.headers.get("x-forwarded-for")
   const clientIpAddress = forwardedFor ? forwardedFor.split(",")[0]?.trim() : undefined
 
@@ -17,16 +15,7 @@ export async function GET(request: NextRequest) {
   const eventSourceUrl = request.headers.get("referer") ?? fallbackSourceUrl
 
   try {
-    await sendMetaCompleteRegistrationConversion({
-      eventId: registrationEventId,
-      eventSourceUrl,
-      clientIpAddress,
-      clientUserAgent: request.headers.get("user-agent") ?? undefined,
-      fbp: request.cookies.get("_fbp")?.value,
-      fbc: request.cookies.get("_fbc")?.value,
-    })
-
-    await sendMetaInitiateCheckoutConversion({
+    await sendMetaLeadConversion({
       eventId,
       eventSourceUrl,
       clientIpAddress,
@@ -37,7 +26,7 @@ export async function GET(request: NextRequest) {
       currency: "EUR",
     })
   } catch (error) {
-    console.error("Meta CAPI InitiateCheckout error:", error)
+    console.error("Meta CAPI Lead error:", error)
   }
 
   const response = NextResponse.redirect(stripePaymentLinkUrl, { status: 302 })

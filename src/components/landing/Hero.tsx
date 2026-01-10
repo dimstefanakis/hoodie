@@ -1,10 +1,11 @@
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
 interface HeroProps {
-  onBuyClick: () => void
+  ctaHref: string
 }
 
-export function Hero({ onBuyClick }: HeroProps) {
+export function Hero({ ctaHref }: HeroProps) {
   return (
     <section className="relative h-screen w-full flex flex-col justify-center items-center text-center overflow-hidden bg-black text-white">
 
@@ -43,10 +44,10 @@ export function Hero({ onBuyClick }: HeroProps) {
 
         <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-500 fill-mode-both pt-4">
           <Button
-            onClick={onBuyClick}
+            asChild
             className="h-14 px-12 text-lg font-normal tracking-wide bg-white text-black hover:bg-zinc-200 border-none rounded-full transition-all hover:scale-105 duration-300 shadow-xl"
           >
-            Secure Early Access
+            <Link href={ctaHref}>Shop now</Link>
           </Button>
           <p className="mt-4 text-xs uppercase tracking-widest text-zinc-500 font-medium">
             Limited First Drop

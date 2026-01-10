@@ -146,3 +146,32 @@ export async function sendMetaInitiateCheckoutConversion({
     ...rest,
   })
 }
+
+type SendLeadParams = Omit<
+  SendMetaConversionParams,
+  "eventName" | "email" | "customData"
+> & {
+  value?: number
+  currency?: string
+}
+
+export async function sendMetaLeadConversion({
+  value,
+  currency,
+  ...rest
+}: SendLeadParams) {
+  const customData: Record<string, string | number | boolean> = {
+    content_name: "Reserve Spot",
+  }
+
+  if (typeof value === "number") {
+    customData.value = value
+    customData.currency = currency ?? "EUR"
+  }
+
+  await sendMetaConversionEvent({
+    eventName: "Lead",
+    customData,
+    ...rest,
+  })
+}

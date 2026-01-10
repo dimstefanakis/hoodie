@@ -1,182 +1,148 @@
-# PRD — Single‑Product Demand + Price Validation (EU)  
-Product: **Comfort Cloak Hoodie** (Eden‑style hoodie‑blanket / cloak)
+# PRD: High-Fidelity Validation Flow ("The Cloak")
 
-Owner: Growth  
-Audience: EU consumers (DTC)  
-Status: Draft (engineer‑ready)  
-Last updated: 2025-12-30
+## 1. Project Overview
 
----
+**Goal:** Validate high-intent demand for "The Cloak" at a €149 price point using a "Fake Door" strategy.
+**Mechanism:** Users experience a fully functional e-commerce flow (Product Page → Add to Cart → Checkout). The checkout process is interrupted by a "Batch Allocated" modal, pivoting the user to a €1 reservation via a Stripe Link.
+**Primary Metric:** `InitiateCheckout` events (clicks on the "Checkout" button in the cart drawer).
 
-## 1) Goal
-Validate **EU demand** and **price elasticity** for a single hero product *before* building the full commerce stack.
+## 2. Tech Stack & Dependencies
 
-We will run paid ads to a landing page that:
-- Shows the product and a price (A/B by variant).
-- Uses a strong CTA (“Buy now”) that leads to an **email capture** (no payment).
-- After email submission, communicates **truthfully** that the product is not available today and that we’ll notify them at launch/restock.
+- **Framework:** Next.js (App Router)
+- **Styling:** Tailwind CSS
+- **UI Components:** shadcn/ui (Sheet, Dialog, Button, Badge, Skeleton, Separator)
+- **Icons:** Lucide React
+- **State Management:** Zustand
+- **Analytics:** Facebook Pixel (Meta CAPI optional but recommended)
+- **Payments:** Stripe Payment Link (External)
 
-### Success definition
-Within a fixed budget window, we can confidently answer:
-- **Is there enough demand at €X?**
-- **Which price point maximizes high‑intent leads (quality) vs volume (CPL)?**
-- **Which countries/segments respond best?**
+## 3. Global State (Zustand Store)
 
----
+Create a store `useStore` with the following slices:
 
-## 2) Non‑Goals
-- Taking payments / processing orders
-- Inventory / fulfillment integration
-- Complex personalization or multi‑product catalog
-- Retargeting that requires non‑essential cookies (we’ll keep tracking minimal)
+### A. Cart State
 
----
+- `items`: Array of objects `{ id, name, size, price, image }`.
+- `addItem(item)`: Adds item to array, opens Cart Drawer.
+- `removeItem(id)`: Removes item.
+- `cartTotal`: Derived value (always €149 for this MVP).
 
-## 4) Hypotheses
-H1: The comfort‑cloak concept can achieve **>= 10% lead conversion** on landing page at one of the tested price points.  
-H2: There exists a price point where **high‑intent leads** remain strong (little drop in conversion vs cheaper price).  
-H3: Certain EU markets (e.g., DE/FR/IT/ES/NL/SE) will show materially better CPL or higher intent.
+### B. UI State
 
----
+- `isCartOpen`: Boolean (Controls shadcn Sheet).
+- `isModalOpen`: Boolean (Controls shadcn Dialog).
+- `isLoadingCheckout`: Boolean (For the spinner effect).
+- `setCartOpen(bool)`: Toggles drawer.
+- `setModalOpen(bool)`: Toggles modal.
 
-## 5) Experiment Design
+### C. Social Proof State
 
-### 5.1 Price variants (A/B/C)
-Use 3 variants to map elasticity quickly:
-- Variant A: **€129**
-- Variant B: **€149**
-- Variant C: **€169**
+- `activeShoppers`: Number.
+- `fetchShoppers()`: GET request to API.
+- `incrementShoppers()`: POST request to API.
 
-> Note: If you’re set on €150, use **€139 / €149 / €159** instead.  
-> Engineer: make variants configurable via env or CMS.
+## 4. Backend Logic (The "Live" Counter)
 
-### 5.2 Variant assignment (no cookies needed)
-**Preferred**: assign price by URL so the ad set determines the variant.
-- /p/cloak?price=129&v=A
-- /p/cloak?price=149&v=B
-- /p/cloak?price=169&v=C
+**File:** `src/data/cart-stats.json`
+**Content:** `{ "count": 12 }`
 
-This avoids needing an A/B assignment cookie.
+**API Route:** `/api/stats`
 
-### 5.3 Funnel + events
-**Funnel**
-1) Ad click → Landing (price variant shown)
-2) User clicks **Buy now**
-3) Email capture modal/page (plus opt‑in checkbox)
-4) Confirmation screen (pre‑launch / restock messaging + next step)
-5) Optional: 1‑question “Would you buy at this price?” (post‑submit)
+1. **GET:** Reads `cart-stats.json` and returns the count.
+2. **POST:**
+   - Reads the file.
+   - Increments count by 1.
+   - **Logic:** If count > 25, reset to 12 (to maintain realism and prevent inflation).
+   - Writes to file.
+   - Returns new count.
 
-**Track these events (server‑side where possible)**
-- `page_view` (variant, country, utm)
-- `buy_click` (variant)
-- `lead_submit` (variant, email, consent flag)
-- `price_intent` (optional: would_buy = yes/no or price threshold choice)
+## 5. Page Architecture & User Flow
 
----
+### A. Product Page (`/`)
 
-## 6) User Stories
-- As a visitor, I want to understand what this is in <10 seconds, so I can decide if it’s for me.
-- As a visitor, I want to see the price clearly before I “buy.”
-- As a visitor, I want to submit my email and immediately know what happens next (no surprises).
-- As the business, I want to compare demand across prices and countries reliably.
+**Layout:**
 
----
+- **Mobile:** Image Carousel (Swipeable) → Details → Sticky "Add to Cart" Bar.
+- **Desktop:** Split view. Left side = 2x2 Grid of images. Right side = Sticky Product Details.
 
-## 7) User Experience Requirements
+**Key Elements:**
 
-### 7.1 Landing page (high level)
-- Hero section (image/video), headline, 3 benefit bullets
-- Price display (from `price` param or variant)
-- CTA button: **Buy now**
-- Short trust section: materials, warmth, pockets/fit, easy care
-- FAQ (shipping timing, sizing, what happens after email)
+1. **Header:** Minimal logo (Left), Cart Icon with `items.length` Badge (Right).
+2. **Live Counter:** Text component: "🔥 `{activeShoppers}` people have this in their cart." (Fetches on mount).
+3. **Images:** 3-4 high-quality placeholders showing texture/drape.
+4. **Size Selector:**
+   - Radio Group: [S/M] [L/XL].
+   - **Validation:** "Add to Cart" is disabled or shakes if no size selected.
+5. **"Add to Cart" Button:**
+   - **Action:**
+     - Triggers FB Pixel: `AddToCart`.
+     - Calls `incrementShoppers()` (API).
+     - Adds item to Zustand store.
+     - Opens **Cart Drawer**.
 
-### 7.2 “Buy now” click behavior
-On click:
-- Open modal or dedicated step: “Reserve first access”
-- Explain: **No payment today** (microcopy)
-- Email input + marketing consent checkbox (unticked)
-- Submit button: “Notify me when it’s available”
+### B. Cart Drawer (The "Fake" Checkout)
 
-### 7.3 Post‑submit confirmation screen (truthful scarcity framing)
-Copy must not be “fake sold out.” Use one of:
-- “**First drop is not available today** — we’ll email you when the next batch opens.”
-- “**Limited first batch is already allocated** — join the priority list.”
+**Component:** `Sheet` (from shadcn).
+**Content:**
 
-This gives strong intent signal without misleading the user.
+- Header: "Shopping Cart".
+- Item Row: Image thumbnail, "The Cloak", Size, Price (€149).
+- Footer:
+  - Subtotal: €149
+  - Shipping: "Calculated at next step" (or "Free").
+  - **CTA Button:** "Checkout" (Black, full width).
 
----
+**Logic (The Trap):**
 
-## 8) Data + Privacy Requirements
+- **On Click "Checkout":**
+  1. Fire FB Pixel: `InitiateCheckout` (Crucial).
+  2. Set `isLoadingCheckout` to true (show spinner on button).
+  3. Wait 800ms.
+  4. Set `setCartOpen(false)`.
+  5. Set `setModalOpen(true)`.
 
-### 8.1 Data minimization
-Store only what we need for the experiment:
-- email
-- `consent_marketing` boolean
-- `variant` / `price`
-- country (from locale selector or server geo; if unavailable, store “unknown”)
-- utm_source / utm_campaign / utm_content
-- created_at timestamp
-- optional: `intent_answer`
+### C. The "Stock Alert" Modal
 
----
+**Component:** `Dialog` (from shadcn).
+**Trigger:** Automatically opens after Cart Drawer closes.
+**Content:**
 
-## 9) Technical Requirements
+- **Title:** "Secure Early Access" / "Batch Allocated"
+- **Body:** "The Cloak launches soon at **€149**. Avoid the public waitlist and secure your allocation now for just **€1 (refundable)**."
+- **CTA Button:** "Reserve Spot for €1".
+- **Action:** Redirects to Stripe Payment Link.
+- **Tracking:** Fire `Lead` event here (optional, to double verify).
 
-### 9.1 Stack
-- Next.js (App Router)
-- DB: Postgres (Supabase or managed)
-- Email provider: Resend / Brevo / Mailgun (any; engineer choice)
+## 6. Analytics & Events Strategy
 
-### 9.2 Endpoints
-- `POST /api/leads`
-  - body: { email, consent_marketing, variant, price, utm, country, intent_answer? }
-  - validate email, normalize lowercase, reject obvious bots
-  - respond: { ok: true }
-- Optional: `GET /api/stats` (protected) for dashboard
+We will use a custom hook or utility `trackEvent` to handle Pixel firing.
 
-### 9.3 Anti‑spam / abuse
-- Honeypot hidden field
-- Rate limit by IP (store a short‑lived hash; avoid storing raw IP long‑term)
-- Basic bot detection (user agent + time‑to‑submit threshold)
+| User Action | Event Name | Data Payload |
+| --- | --- | --- |
+| Page Load | `ViewContent` | `{ content_name: 'The Cloak', value: 149, currency: 'EUR' }` |
+| Select Size | `CustomizeProduct` | `{ variant: 'L/XL' }` |
+| Click "Add to Cart" | `AddToCart` | `{ value: 149, currency: 'EUR' }` |
+| **Click "Checkout"** | **`InitiateCheckout`** | **`{ value: 149, currency: 'EUR' }` (Primary KPI)** |
+| Click "Reserve €1" | `Lead` | `{ value: 1, currency: 'EUR' }` |
 
-### 9.4 Localization
-- Start with English.
-- Add language switch later (DE/FR/IT/ES) if ads expand.
+## 7. Implementation Steps
 
----
+1. **Scaffold:** `npx create-next-app@latest` (TS, Tailwind, App Router).
+2. **Install:** `npx shadcn@latest init` → add `sheet`, `dialog`, `button`, `radio-group`.
+3. **Setup Zustand:** Create `src/store/index.ts`.
+4. **Backend:** Create `src/app/api/stats/route.ts` and `src/data/cart-stats.json`.
+5. **Components:** Build `ProductGallery`, `ProductInfo`, `CartDrawer`, `ReservationModal`.
+6. **Integration:** Wire up the "Add to Cart" → "Drawer" → "Modal" flow.
+7. **Analytics:** Add `<Script>` for FB Pixel in `layout.tsx`.
 
-## 10) Analytics / Reporting
-We need a simple view by:
-- variant (price)
-- country
-- ad set / campaign (from UTM)
-- device
+## 8. Copy Reference (Context)
 
-Core metrics:
-- CTR (from ad platform)
-- Landing → Buy click rate
-- Buy click → Lead submit rate
-- Overall lead conversion rate
-- CPL (from ad platform spend / leads)
+**Product Title:** The Cloak
+**Price:** €149
+**Description:**
 
----
+> "Not a blanket. A garment. Engineered from 450gsm heavyweight French Terry. The Cloak drapes with intention, providing the warmth of a duvet with the silhouette of modern streetwear. Deep pitch black. Anti-lint interior."
 
-## 11) Launch Plan (Experiment)
-1) Create 3 ad sets per target country (one per price URL).
-2) Run for 7–14 days or until each variant hits a minimum lead count.
-3) Declare winner based on:
-   - lead conversion rate and CPL
-   - intent answer rate (if implemented)
-   - qualitative: comments/DM feedback
+**Stock Alert Message:**
 
-Stop conditions:
-- If CTR < 0.8% across all creatives after iteration → revise creative/offer.
-- If lead conversion < 5% consistently → revise landing copy/positioning.
-- If highest price performs within 80–90% of lower price conversion → keep higher price.
-
----
-
-## 12) Open Questions (engineer can proceed with defaults)
-- Do we implement the optional post‑submit intent question? No
-- Do we implement consent banner now? No
+> "Batch 1 is strictly limited. The Cloak launches soon at €149. Avoid the public waitlist and secure your allocation now for just €1 (refundable)."
