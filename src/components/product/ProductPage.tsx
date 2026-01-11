@@ -9,11 +9,11 @@ import { cn } from "@/lib/utils"
 import { trackMetaEvent } from "@/lib/analytics/meta-pixel"
 import { useStore } from "@/store"
 
-import { ProductGallery } from "./ProductGallery"
+import { Footer } from "@/components/landing/Footer"
+import { ProductGallery, type ProductGalleryImage } from "./ProductGallery"
 import { ProductInfo } from "./ProductInfo"
 import { CartDrawer } from "./CartDrawer"
 import { ReservationModal } from "./ReservationModal"
-import { Footer } from "@/components/landing/Footer"
 
 const PRODUCT = {
   id: "cloak",
@@ -22,7 +22,11 @@ const PRODUCT = {
   image: "/images/cloak.png",
 }
 
-export function ProductPage() {
+interface ProductPageProps {
+  galleryImages?: ProductGalleryImage[]
+}
+
+export function ProductPage({ galleryImages }: ProductPageProps) {
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [showSizeError, setShowSizeError] = useState(false)
   const [shakeCta, setShakeCta] = useState(false)
@@ -115,7 +119,7 @@ export function ProductPage() {
       <div className="pb-24 md:pb-0">
         <main className="mx-auto max-w-6xl pt-24">
           <div className="grid gap-10 md:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
-            <ProductGallery />
+            <ProductGallery images={galleryImages} />
             <div className="md:sticky md:top-28 self-start">
               <ProductInfo
                 selectedSize={selectedSize}
