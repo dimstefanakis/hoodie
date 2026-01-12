@@ -18,7 +18,7 @@ const galleryImages = [
     filtered: false,
   },
   {
-    src: "/images/Gemini_Generated_Image_xq3do6xq3do6xq3d Background Removed.webp",
+    src: "/images/Gemini_Generated_Image_y5lhr3y5lhr3y5lh.webp",
     alt: "The Cloak - silhouette",
     label: "Signature Drape",
     filtered: false,
