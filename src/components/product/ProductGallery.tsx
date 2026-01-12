@@ -1,3 +1,5 @@
+import type { ReactNode } from "react"
+
 export type ProductGalleryImage = {
   src: string
   alt: string
@@ -20,9 +22,13 @@ const defaultImages: ProductGalleryImage[] = [
 
 interface ProductGalleryProps {
   images?: ProductGalleryImage[]
+  primaryAction?: ReactNode
 }
 
-export function ProductGallery({ images = defaultImages }: ProductGalleryProps) {
+export function ProductGallery({
+  images = defaultImages,
+  primaryAction,
+}: ProductGalleryProps) {
   return (
     <section className="w-full">
       <div className="md:hidden">
@@ -41,6 +47,11 @@ export function ProductGallery({ images = defaultImages }: ProductGalleryProps) 
                 key={`${image.alt}-${index}`}
                 className="relative min-w-[80%] snap-center overflow-hidden border border-zinc-900 bg-black"
               >
+                {primaryAction ? (
+                  <div className="absolute right-4 top-4 z-10">
+                    {primaryAction}
+                  </div>
+                ) : null}
                 <div className="aspect-[4/5]">
                   <img
                     src={image.src}
@@ -76,6 +87,11 @@ export function ProductGallery({ images = defaultImages }: ProductGalleryProps) 
               key={`${image.alt}-${index}`}
               className="relative aspect-[4/5] overflow-hidden border border-zinc-900 bg-black"
             >
+              {primaryAction ? (
+                <div className="absolute right-4 top-4 z-10">
+                  {primaryAction}
+                </div>
+              ) : null}
               <img
                 src={image.src}
                 alt={image.alt}

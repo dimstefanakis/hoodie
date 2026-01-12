@@ -1,11 +1,13 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { ShoppingBag } from "lucide-react"
+import dynamic from "next/dynamic"
+import { ShoppingBag, X } from "lucide-react"
 import posthog from "posthog-js"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Dialog, DialogClose, DialogContent } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 import { trackMetaEvent } from "@/lib/analytics/meta-pixel"
 import { useStore } from "@/store"
@@ -15,6 +17,28 @@ import { ProductGallery, type ProductGalleryImage } from "./ProductGallery"
 import { ProductInfo } from "./ProductInfo"
 import { CartDrawer } from "./CartDrawer"
 import { ReservationModal } from "./ReservationModal"
+
+const ViewerPlaceholder = () => (
+  <div className="absolute inset-0 z-10 flex items-center justify-center bg-black">
+    <img
+      src="/images/cloak.png"
+      alt="The Cloak preview"
+      className="absolute inset-0 h-full w-full object-cover blur-md opacity-70 scale-105"
+    />
+    <div className="absolute inset-0 bg-black/45" />
+    <div className="relative z-10 flex flex-col items-center gap-4">
+      <div className="h-10 w-10 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+      <span className="text-[10px] uppercase tracking-[0.35em] text-white/70">
+        Loading 3D view
+      </span>
+    </div>
+  </div>
+)
+
+const WizardRobeViewer = dynamic(() => import("@/components/robe/WizardRobe"), {
+  ssr: false,
+  loading: () => <ViewerPlaceholder />,
+})
 
 const PRODUCT = {
   id: "cloak",
@@ -32,6 +56,8 @@ export function ProductPage({ galleryImages }: ProductPageProps) {
   const [showSizeError, setShowSizeError] = useState(false)
   const [shakeCta, setShakeCta] = useState(false)
   const shakeTimerRef = useRef<number | null>(null)
+  const [isViewerOpen, setViewerOpen] = useState(false)
+  const [viewerReady, setViewerReady] = useState(false)
 
   const items = useStore((state) => state.items)
   const addItem = useStore((state) => state.addItem)
@@ -109,6 +135,23 @@ export function ProductPage({ galleryImages }: ProductPageProps) {
     shakeCta && "animate-[shake_0.3s_ease-in-out]",
   )
 
+  const viewerButton = (
+    <button
+      type="button"
+      onClick={() => setViewerOpen(true)}
+      className="rounded-full border border-white/30 bg-black/60 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.35em] text-white backdrop-blur transition hover:bg-white hover:text-black"
+    >
+      View in 3D 360°
+    </button>
+  )
+
+  const handleViewerChange = (open: boolean) => {
+    setViewerOpen(open)
+    if (open) {
+      setViewerReady(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black">
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-zinc-900 bg-black/70 backdrop-blur">
@@ -135,7 +178,7 @@ export function ProductPage({ galleryImages }: ProductPageProps) {
       <div className="pb-24 md:pb-0">
         <main className="mx-auto max-w-6xl pt-24">
           <div className="grid gap-10 md:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
-            <ProductGallery images={galleryImages} />
+            <ProductGallery images={galleryImages} primaryAction={viewerButton} />
             <div className="md:sticky md:top-28 self-start">
               <ProductInfo
                 selectedSize={selectedSize}
@@ -174,6 +217,33 @@ export function ProductPage({ galleryImages }: ProductPageProps) {
 
       <CartDrawer />
       <ReservationModal />
+      <Dialog open={isViewerOpen} onOpenChange={handleViewerChange}>
+        <DialogContent
+          showCloseButton={false}
+          className="fixed inset-0 left-0 top-0 h-[100dvh] w-screen max-w-none translate-x-0 translate-y-0 rounded-none border-0 bg-black p-0"
+          style={{
+            transform: "none",
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+          }}
+        >
+          <DialogClose className="absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/60 text-white backdrop-blur transition hover:bg-white hover:text-black">
+            <X className="h-4 w-4" />
+            <span className="sr-only">Close 3D viewer</span>
+          </DialogClose>
+          {isViewerOpen ? (
+            <div className="relative h-full w-full">
+              {!viewerReady ? <ViewerPlaceholder /> : null}
+              <WizardRobeViewer
+                className="h-full bg-black"
+                onReady={() => setViewerReady(true)}
+              />
+            </div>
+          ) : null}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
