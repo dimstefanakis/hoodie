@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { Loader2 } from "lucide-react"
+import posthog from "posthog-js"
 
 import {
   Dialog,
@@ -31,9 +32,18 @@ export function ReservationModal() {
       { value: 1, currency: "EUR" },
       { eventId },
     )
+    posthog.capture('reservation_started', {
+      value: 1,
+      currency: 'EUR',
+    })
 
     const href = `${stripeReservePath}?event_id=${encodeURIComponent(eventId)}`
     window.location.href = href
+  }
+
+  const handleDismiss = () => {
+    posthog.capture('reservation_modal_dismissed')
+    setModalOpen(false)
   }
 
   return (
@@ -51,7 +61,7 @@ export function ReservationModal() {
         <div className="space-y-6 pt-4">
           <p className="text-sm text-zinc-400 leading-relaxed">
             Reserve your place in line for the next batch with a{" "}
-            <span className="text-white">€1 (refundable)</span> hold. You'll
+            <span className="text-white">€1 (refundable)</span> hold. You&apos;ll
             be notified the moment your slot opens.
           </p>
 
@@ -72,7 +82,7 @@ export function ReservationModal() {
             </Button>
             <Button
               variant="ghost"
-              onClick={() => setModalOpen(false)}
+              onClick={handleDismiss}
               className="h-12 w-full text-zinc-400 hover:bg-zinc-900 hover:text-white"
             >
               I&apos;ll wait for later

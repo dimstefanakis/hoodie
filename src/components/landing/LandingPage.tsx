@@ -1,4 +1,7 @@
+"use client"
+
 import Link from "next/link";
+import posthog from "posthog-js";
 import { Hero } from "@/components/landing/Hero";
 import { Features } from "@/components/landing/Features";
 import { ImageGrid } from "@/components/landing/ImageGrid";
@@ -12,6 +15,7 @@ export function LandingPage() {
         <Link
           href="/shop"
           className="text-sm uppercase tracking-widest hover:underline underline-offset-4"
+          onClick={() => posthog.capture('shop_now_clicked', { source: 'header_nav' })}
         >
           Shop now
         </Link>

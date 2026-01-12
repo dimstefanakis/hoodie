@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { ShoppingBag } from "lucide-react"
+import posthog from "posthog-js"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -60,6 +61,11 @@ export function ProductPage({ galleryImages }: ProductPageProps) {
     setSelectedSize(value)
     setShowSizeError(false)
     trackMetaEvent("CustomizeProduct", { variant: value })
+    posthog.capture('size_selected', {
+      size: value,
+      product_id: PRODUCT.id,
+      product_name: PRODUCT.name,
+    })
   }
 
   const triggerShake = () => {
@@ -80,6 +86,13 @@ export function ProductPage({ galleryImages }: ProductPageProps) {
     }
 
     trackMetaEvent("AddToCart", { value: PRODUCT.price, currency: "EUR" })
+    posthog.capture('add_to_cart', {
+      product_id: PRODUCT.id,
+      product_name: PRODUCT.name,
+      size: selectedSize,
+      price: PRODUCT.price,
+      currency: 'EUR',
+    })
     incrementShoppers()
     addItem({
       id: PRODUCT.id,
@@ -104,7 +117,10 @@ export function ProductPage({ galleryImages }: ProductPageProps) {
             The Cloak
           </span>
           <button
-            onClick={() => setCartOpen(true)}
+            onClick={() => {
+              posthog.capture('cart_opened', { items_count: items.length })
+              setCartOpen(true)
+            }}
             className="relative flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-zinc-300 hover:text-white"
           >
             <ShoppingBag className="h-4 w-4" />

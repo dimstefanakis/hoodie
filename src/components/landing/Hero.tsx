@@ -1,4 +1,7 @@
+"use client"
+
 import Link from "next/link"
+import posthog from "posthog-js"
 import { Button } from "@/components/ui/button"
 
 interface HeroProps {
@@ -47,7 +50,7 @@ export function Hero({ ctaHref }: HeroProps) {
             asChild
             className="h-14 px-12 text-lg font-normal tracking-wide bg-white text-black hover:bg-zinc-200 border-none rounded-full transition-all hover:scale-105 duration-300 shadow-xl"
           >
-            <Link href={ctaHref}>Shop now</Link>
+            <Link href={ctaHref} onClick={() => posthog.capture('shop_now_clicked', { source: 'hero_cta' })}>Shop now</Link>
           </Button>
           <p className="mt-4 text-xs uppercase tracking-widest text-zinc-500 font-medium">
             Limited First Drop

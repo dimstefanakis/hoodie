@@ -5,6 +5,7 @@ import { cookies, headers } from 'next/headers'
 import { sendMetaCompleteRegistrationConversion } from '@/lib/meta/conversions-api'
 import { randomUUID } from 'node:crypto'
 import { createWaitlistRecord } from '@/lib/airtable/waitlist'
+import { getPostHogClient } from '@/lib/posthog-server'
 
 const schema = z.object({
   email: z.string().trim().email(),
@@ -43,11 +44,20 @@ export async function submitLead(prevState: SubmitState, formData: FormData): Pr
 
   const eventId = validatedFields.data.event_id ?? randomUUID()
 
+  const posthog = getPostHogClient()
+
   let airtableRecordId: string
   try {
     airtableRecordId = await createWaitlistRecord(validatedFields.data.email)
   } catch (error) {
     console.error('Airtable waitlist error:', error)
+    posthog.capture({
+      distinctId: validatedFields.data.email,
+      event: 'waitlist_error',
+      properties: {
+        error_message: error instanceof Error ? error.message : 'Unknown error',
+      },
+    })
     return {
       success: false,
       error: 'Failed to add you to the waitlist. Please try again.',
@@ -80,6 +90,24 @@ export async function submitLead(prevState: SubmitState, formData: FormData): Pr
   } catch (error) {
     console.error('Meta CAPI CompleteRegistration error:', error)
   }
+
+  // Track lead captured event and identify user
+  posthog.capture({
+    distinctId: validatedFields.data.email,
+    event: 'lead_captured',
+    properties: {
+      email: validatedFields.data.email,
+      variant: validatedFields.data.variant,
+      price: validatedFields.data.price,
+      airtable_record_id: airtableRecordId,
+    },
+  })
+  posthog.identify({
+    distinctId: validatedFields.data.email,
+    properties: {
+      email: validatedFields.data.email,
+    },
+  })
 
   return {
     success: true,

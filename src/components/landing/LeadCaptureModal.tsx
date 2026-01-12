@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
+import posthog from "posthog-js";
 
 interface LeadCaptureModalProps {
   isOpen: boolean;
@@ -57,7 +58,18 @@ export function LeadCaptureModal({
       );
     }
 
+    posthog.capture('lead_modal_reserve_clicked', {
+      price: price,
+      value: 1,
+      currency: 'EUR',
+    });
+
     window.location.href = href;
+  };
+
+  const handleDismiss = () => {
+    posthog.capture('lead_modal_dismissed');
+    onOpenChange(false);
   };
 
   return (
@@ -103,7 +115,7 @@ export function LeadCaptureModal({
             </Button>
 
             <Button
-              onClick={() => onOpenChange(false)}
+              onClick={handleDismiss}
               className="w-full h-12 text-lg font-normal bg-transparent text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 dark:text-zinc-500 dark:hover:text-white dark:hover:bg-zinc-900 border-0 rounded-none"
             >
               I&apos;ll wait for public release

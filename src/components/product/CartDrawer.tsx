@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react"
 import { Loader2, Trash2 } from "lucide-react"
+import posthog from "posthog-js"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -47,6 +48,11 @@ export function CartDrawer() {
     if (!items.length) return
 
     trackMetaEvent("InitiateCheckout", { value: CART_PRICE, currency: "EUR" })
+    posthog.capture('checkout_initiated', {
+      cart_total: cartTotal,
+      items_count: items.length,
+      currency: 'EUR',
+    })
     setLoadingCheckout(true)
 
     timeoutRef.current = window.setTimeout(() => {
@@ -94,7 +100,15 @@ export function CartDrawer() {
                   <div className="flex flex-col items-end gap-2">
                     <span className="text-sm text-zinc-300">€{item.price}</span>
                     <button
-                      onClick={() => removeItem(item.id)}
+                      onClick={() => {
+                        posthog.capture('item_removed_from_cart', {
+                          product_id: item.id,
+                          product_name: item.name,
+                          size: item.size,
+                          price: item.price,
+                        })
+                        removeItem(item.id)
+                      }}
                       className="text-zinc-500 hover:text-white transition-colors"
                       aria-label="Remove item"
                     >
