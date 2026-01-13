@@ -19,12 +19,12 @@ export function ProductInfo({
   selectedSize,
   onSizeChange,
   onAddToCart,
-  activeShoppers,
+  activeShoppers: _activeShoppers,
   showSizeError,
   addToCartClassName,
   addToCartLabel = "Add to Cart",
 }: ProductInfoProps) {
-  const shoppers = activeShoppers ?? 12
+  const shoppers = 31
 
   return (
     <section className="space-y-8 px-6 pb-24 md:pb-0">
