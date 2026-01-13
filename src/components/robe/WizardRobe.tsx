@@ -4,13 +4,7 @@ import React, { Suspense, useEffect, useLayoutEffect, useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Stage, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
-import type { GLTF } from "three-stdlib";
 import { MeshSurfaceSampler } from "three/examples/jsm/math/MeshSurfaceSampler.js";
-
-type GLTFResult = GLTF & {
-  nodes: Record<string, THREE.Mesh>;
-  materials: Record<string, THREE.Material>;
-};
 
 const FUR_LINES_COUNT = 500000;
 const FUR_MIN_LENGTH = 0.004;
@@ -21,9 +15,9 @@ interface FurLinesModelProps {
 }
 
 function FurLinesModel({ onReady }: FurLinesModelProps) {
-  const { scene } = useGLTF("/untitled.glb") as GLTFResult;
+  const { scene } = useGLTF("/untitled.glb");
 
-  const targetMesh = useMemo(() => {
+  const targetMesh = useMemo<THREE.Mesh | null>(() => {
     let found: THREE.Mesh | null = null;
     scene.traverse((obj) => {
       if (!found && (obj as THREE.Mesh).isMesh) {
