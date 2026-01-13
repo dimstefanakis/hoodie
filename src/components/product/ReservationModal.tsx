@@ -41,11 +41,6 @@ export function ReservationModal() {
     window.location.href = href
   }
 
-  const handleDismiss = () => {
-    posthog.capture('reservation_modal_dismissed')
-    setModalOpen(false)
-  }
-
   return (
     <Dialog open={isModalOpen} onOpenChange={setModalOpen}>
       <DialogContent className="border-zinc-900 bg-black p-8 text-center text-white">
@@ -79,13 +74,6 @@ export function ReservationModal() {
               ) : (
                 "Reserve Spot for €1"
               )}
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={handleDismiss}
-              className="h-12 w-full text-zinc-400 hover:bg-zinc-900 hover:text-white"
-            >
-              I&apos;ll wait for later
             </Button>
           </div>
         </div>
