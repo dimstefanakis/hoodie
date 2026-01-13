@@ -1,4 +1,5 @@
 import { ProductPage } from "@/components/product/ProductPage";
+import { defaultSize } from "@/components/product/size-options";
 
 const galleryImages = [
   {
@@ -26,5 +27,7 @@ const galleryImages = [
 ];
 
 export default function ShopPage() {
-  return <ProductPage galleryImages={galleryImages} />;
+  return (
+    <ProductPage galleryImages={galleryImages} defaultSize={defaultSize} />
+  );
 }

@@ -3,11 +3,7 @@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
-
-const sizeOptions = [
-  { id: "size-sm", value: "S/M" },
-  { id: "size-lg", value: "L/XL" },
-]
+import { sizeOptions } from "./size-options"
 
 interface SizeSelectorProps {
   value: string | null

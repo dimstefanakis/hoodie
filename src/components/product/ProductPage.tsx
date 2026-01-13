@@ -49,10 +49,13 @@ const PRODUCT = {
 
 interface ProductPageProps {
   galleryImages?: ProductGalleryImage[]
+  defaultSize?: string | null
 }
 
-export function ProductPage({ galleryImages }: ProductPageProps) {
-  const [selectedSize, setSelectedSize] = useState<string | null>(null)
+export function ProductPage({ galleryImages, defaultSize }: ProductPageProps) {
+  const [selectedSize, setSelectedSize] = useState<string | null>(
+    defaultSize ?? null,
+  )
   const [showSizeError, setShowSizeError] = useState(false)
   const [shakeCta, setShakeCta] = useState(false)
   const shakeTimerRef = useRef<number | null>(null)
