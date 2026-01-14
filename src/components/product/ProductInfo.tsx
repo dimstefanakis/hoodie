@@ -1,18 +1,18 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
-import { cn } from "@/lib/utils"
-import { SizeSelector } from "./SizeSelector"
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
+import { SizeSelector } from "./SizeSelector";
 
 interface ProductInfoProps {
-  selectedSize: string | null
-  onSizeChange: (value: string) => void
-  onAddToCart: () => void
-  activeShoppers: number | null
-  showSizeError: boolean
-  addToCartClassName?: string
-  addToCartLabel?: string
+  selectedSize: string | null;
+  onSizeChange: (value: string) => void;
+  onAddToCart: () => void;
+  activeShoppers: number | null;
+  showSizeError: boolean;
+  addToCartClassName?: string;
+  addToCartLabel?: string;
 }
 
 export function ProductInfo({
@@ -24,7 +24,7 @@ export function ProductInfo({
   addToCartClassName,
   addToCartLabel = "Add to Cart",
 }: ProductInfoProps) {
-  const shoppers = 31
+  const shoppers = 34;
 
   return (
     <section className="space-y-8 px-6 pb-24 md:pb-0">
@@ -51,7 +51,9 @@ export function ProductInfo({
             VAT included
           </span>
         </div>
-        <p className="text-sm text-zinc-500">Ships in batches. Limited first drop.</p>
+        <p className="text-sm text-zinc-500">
+          Ships in batches. Limited first drop.
+        </p>
       </div>
 
       <div className="rounded-none border border-zinc-900 bg-zinc-950/40 px-4 py-3 text-sm text-zinc-300">
@@ -76,5 +78,5 @@ export function ProductInfo({
         {addToCartLabel}
       </Button>
     </section>
-  )
+  );
 }
