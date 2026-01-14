@@ -13,15 +13,21 @@ const galleryImages = [
     label: "Plush Interior",
   },
   {
-    src: "/images/Gemini_Generated_Image_ohccd5ohccd5ohcc.webp",
+    src: "/images/Gemini_Generated_Image_3xyiud3xyiud3xyi.webp",
     alt: "The Cloak - studio texture",
     label: "Soft Touch Finish",
     filtered: false,
   },
   {
-    src: "/images/Gemini_Generated_Image_y5lhr3y5lhr3y5lh.webp",
+    src: "/images/Gemini_Generated_Image_k32rq8k32rq8k32r.webp",
     alt: "The Cloak - silhouette",
     label: "Signature Drape",
+    filtered: false,
+  },
+  {
+    src: "/images/Gemini_Generated_Image_rtf4ndrtf4ndrtf4.webp",
+    alt: "The Cloak - detail",
+    label: "Atelier Detail",
     filtered: false,
   },
 ];
