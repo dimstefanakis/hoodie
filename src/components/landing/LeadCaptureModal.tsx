@@ -87,7 +87,7 @@ export function LeadCaptureModal({
         <div className="pt-6">
           {/* Price Context Paragraph */}
           <p className="text-sm font-light text-zinc-500 dark:text-zinc-400 leading-relaxed pb-8">
-            The Cloak launches soon at{" "}
+            The Eclipse Cloak launches soon at{" "}
             <span className="text-zinc-950 dark:text-white font-medium">
               €{price}
             </span>

@@ -6,6 +6,8 @@ import { OrbitControls, Stage, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import { MeshSurfaceSampler } from "three/examples/jsm/math/MeshSurfaceSampler.js";
 
+/* eslint-disable react-hooks/purity */
+
 const FUR_LINES_COUNT = 500000;
 const FUR_MIN_LENGTH = 0.004;
 const FUR_MAX_LENGTH = 0.01;

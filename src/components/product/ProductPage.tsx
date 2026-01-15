@@ -42,7 +42,7 @@ const WizardRobeViewer = dynamic(() => import("@/components/robe/WizardRobe"), {
 
 const PRODUCT = {
   id: "cloak",
-  name: "The Cloak",
+  name: "The Eclipse Cloak",
   price: 149,
   image: "/images/cloak.png",
 }
@@ -160,7 +160,7 @@ export function ProductPage({ galleryImages, defaultSize }: ProductPageProps) {
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-zinc-900 bg-black/70 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <span className="text-xs font-semibold uppercase tracking-[0.4em] text-zinc-300">
-            The Cloak
+            The Eclipse Cloak
           </span>
           <button
             onClick={() => {

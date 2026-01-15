@@ -3,18 +3,18 @@ import { Shield, VolumeX, Feather } from "lucide-react"
 export function Features() {
   const features = [
     {
-      title: "Weight that Grounds You",
-      description: "Engineered with 2kgs of evenly distributed weight to trigger deep touch pressure, calming your nervous system instantly.",
-      icon: Feather,
-    },
-    {
-      title: "Sensory Silence",
-      description: "Lined with high-density, void-black faux fur that muffles sound and creates a tactile haven.",
+      title: "Pitch Black Exterior",
+      description: "Dense faux fur that absorbs light and creates a visual void.",
       icon: VolumeX,
     },
     {
-      title: "The Wizard Silhouette",
-      description: "Oversized, distinct, and commanding. A silhouette that demands space and offers privacy.",
+      title: "Velvet Interior",
+      description: "Proprietary soft-touch lining for immediate warmth and hidden comfort.",
+      icon: Feather,
+    },
+    {
+      title: "Oversized Drape",
+      description: "Structured to flow, not just hang. A silhouette that commands attention.",
       icon: Shield,
     },
   ]

@@ -20,6 +20,7 @@ export function SizeSelector({ value, onChange, isInvalid }: SizeSelectorProps) 
         </span>
         <span className="text-xs text-zinc-500">Oversized by design.</span>
       </div>
+      <p className="text-xs text-zinc-500">S/M: 1.60-1.80m | L/XL: 1.80m+</p>
       <RadioGroup
         value={value ?? undefined}
         onValueChange={onChange}

@@ -92,7 +92,7 @@ export function CartDrawer() {
                   </div>
                   <div className="flex-1 space-y-1">
                     <p className="text-sm uppercase tracking-[0.3em] text-zinc-500">
-                      The Cloak
+                      The Eclipse Cloak
                     </p>
                     <p className="text-base font-light">{item.name}</p>
                     <p className="text-xs text-zinc-500">Size: {item.size}</p>
@@ -129,7 +129,7 @@ export function CartDrawer() {
           </div>
           <div className="flex items-center justify-between text-sm">
             <span className="text-zinc-500">Shipping</span>
-            <span className="text-zinc-400">Calculated at next step</span>
+            <span className="text-zinc-400">Free</span>
           </div>
         </div>
 

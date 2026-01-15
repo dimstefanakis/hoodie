@@ -31,16 +31,16 @@ export function ProductInfo({
       <div className="space-y-4">
         <div className="space-y-2">
           <p className="text-xs uppercase tracking-[0.4em] text-zinc-500">
-            The Cloak
+            The Eclipse Cloak
           </p>
           <h1 className="text-4xl md:text-5xl font-light tracking-tight">
-            Not a blanket. A garment.
+            Disappear into comfort.
           </h1>
         </div>
         <p className="text-sm md:text-base text-zinc-400 leading-relaxed">
-          Engineered from 2kgs high-density faux fur. The Cloak drapes with
-          intention, providing the warmth of a duvet with a commanding, ritual
-          silhouette. Deep pitch black. Anti-lint interior.
+          The Eclipse Cloak bridges the gap between high-fashion outerwear and deep-winter comfort. 
+          Featuring a heavy, high-pile exterior and a velvet-soft interior, it creates a 
+          silhouette that commands attention while keeping the world at bay.
         </p>
       </div>
 

@@ -32,16 +32,16 @@ export function Hero({ ctaHref }: HeroProps) {
       <div className="z-10 max-w-4xl mx-auto px-6 space-y-8 mt-12">
         <div className="space-y-4 animate-in fade-in slide-in-from-bottom-8 duration-1000 fill-mode-both">
           <h1 className="text-7xl md:text-9xl font-semibold tracking-tighter leading-none text-white drop-shadow-2xl">
-            The Cloak.
+            Enter the Void.
           </h1>
           <p className="text-xl md:text-3xl font-light tracking-wide text-zinc-300 max-w-2xl mx-auto drop-shadow-lg">
-            Heavy. Quiet. Yours.
+            The Eclipse Cloak.
           </p>
         </div>
 
         <div className="max-w-xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300 fill-mode-both">
           <p className="text-lg font-light leading-relaxed text-zinc-200/90 drop-shadow-md">
-            A 2ks weighted sanctuary designed to disconnect you from the noise.
+            The comfort of a weighted blanket, elevated into a structured, high-fashion silhouette.
           </p>
         </div>
 

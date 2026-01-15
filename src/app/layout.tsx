@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "The Cloak | Heavy. Quiet. Yours.",
-  description: "A 2kg weighted sanctuary designed to disconnect you from the noise.",
+  title: "The Eclipse Cloak | Enter the Void.",
+  description: "The Eclipse Cloak bridges the gap between high-fashion outerwear and deep-winter comfort. Featuring a heavy, high-pile exterior and a velvet-soft interior.",
 };
 
 const metaPixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID ?? "1586140139068133";
